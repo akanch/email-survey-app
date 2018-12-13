@@ -13,6 +13,14 @@ passport.serializerUser((user, done) => {
   done(null, user.id);
 });
 
+// function to deserialize user.id into a user model
+passport.deserializeUser((id, done) => {
+  // promise returned for asynchronous call to database
+  User.findById(id).then(user => {
+    done(null, user);
+  });
+});
+
 passport.use(
   new GoogleStrategy(
     {
