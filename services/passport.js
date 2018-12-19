@@ -30,22 +30,19 @@ passport.use(
       // tells AWS servers that they can trust Heroku's proxy for HTTPS fix
       proxy: true
     },
-    (accessToken, refreshToken, profile, done) => {
-      User.findOne({ googleId: profile.id }).then(existingUser => {
-        if (existingUser) {
-          // profile ID already exists in database
-          // done is a callback you have to call after work is done in passport,
-          // first argument is an error object if one exists
-          done(null, existingUser);
-        } else {
-          // creates a new model instance and saves it to the database
-          new User({ googleId: profile.id })
-            .save()
-            // needs to be a promise because saving to database is asynchronous
-            // the user here is a separate model instance returned from database
-            .then(user => done(null, user));
-        }
-      });
+    async (accessToken, refreshToken, profile, done) => {
+      const existingUser = await User.findOne({ googleId: profile.id });
+      if (existingUser) {
+        // profile ID already exists in database
+        // done is a callback you have to call after work is done in passport,
+        // first argument is an error object if one exists
+        return done(null, existingUser);
+      }
+      // creates a new model instance and saves it to the database
+      // needs to be a promise because saving to database is asynchronous
+      // the user here is a separate model instance returned from database
+      const user = await new User({ googleId: profile.id }).save();
+      done(null, user);
     }
   )
 );

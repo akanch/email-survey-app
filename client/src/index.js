@@ -1,12 +1,20 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import './index.css';
-import App from './App';
-import * as serviceWorker from './serviceWorker';
+// this file is responsible for Redux/ data setup
+import React from "react";
+import ReactDOM from "react-dom";
+import { Provider } from "react-redux";
+import { createStore, applyMiddleware } from "redux";
 
-ReactDOM.render(<App />, document.getElementById('root'));
+import App from "./components/App";
+import reducers from "./reducers";
 
-// If you want your app to work offline and load faster, you can change
-// unregister() to register() below. Note this comes with some pitfalls.
-// Learn more about service workers: http://bit.ly/CRA-PWA
-serviceWorker.unregister();
+// store takes all the reducers of the app as the first argument,
+// second argument is initial state, last is a middleware call
+const store = createStore(reducers, {}, applyMiddleware());
+
+ReactDOM.render(
+  // the provider tag is a react component that knows how to read changes from
+  // redux store, and informs any new state updates to child components
+  // a reducer is a pure function that takes the previous state and action
+  // and returns the next state
+  <Provider store={store}><App /></Provider>,
+  document.querySelector("#root"));
