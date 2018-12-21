@@ -8,7 +8,16 @@ module.exports = app => {
     })
   );
 
-  app.get("/auth/google/callback", passport.authenticate("google"));
+  // after the user comes back from the OAuth flow, passport middleware
+  // authenticates, and passes the requests to the arrow function to redirect to
+  // dashboard.
+  app.get(
+    "/auth/google/callback",
+    passport.authenticate("google"),
+    (req, res) => {
+      res.redirect("/surveys");
+    }
+  );
 
   app.get("/api/logout", (req, res) => {
     req.logout();
@@ -16,6 +25,6 @@ module.exports = app => {
   });
 
   app.get("/api/current_user", (req, res) => {
-     res.send(req.user);
+    res.send(req.user);
   });
 };
