@@ -5,7 +5,6 @@ import { FETCH_USER } from "../actions/types";
 // logged in. That prevents issues such as a user having bad wifi to not be
 // the login button by default even when they are logged in.s
 export default function(state = null, action) {
-  console.log(action);
   switch (action.type) {
     case FETCH_USER:
       return action.payload || false;

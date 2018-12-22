@@ -20,4 +20,5 @@ ReactDOM.render(
   // a reducer is a pure function that takes the previous state and action
   // and returns the next state
   <Provider store={store}><App /></Provider>,
-  document.querySelector("#root"));
+  document.querySelector("#root")
+);
