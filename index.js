@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 const cookieSession = require("cookie-session");
 const passport = require("passport");
 const keys = require("./config/keys");
+const bodyParser = require("body-parser");
 require("./models/User");
 require("./services/passport");
 
@@ -10,6 +11,9 @@ mongoose.connect(keys.mongoURI);
 
 const app = express();
 
+// by default, express does not parse responses from any requests with a request
+// body. the body-parser middleware instructs express to automatically parse them
+app.use(bodyParser.json());
 app.use(
   // cookieSession takes in a configuration object with two properties
   // cookieSession is a middleware that extracts cookie data and assigns it to req.session
@@ -28,7 +32,10 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
+// functions are returned here which are immediately called with the express
+// app object
 require("./routes/authRoutes")(app);
+require("./routes/billingRoutes")(app);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT);
