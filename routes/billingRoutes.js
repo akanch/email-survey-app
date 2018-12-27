@@ -1,16 +1,20 @@
 const keys = require("../config/keys");
 const stripe = require("stripe")(keys.stripeSecretKey);
+const requireLogin = require("../middlewares/requireLogin");
 
 module.exports = app => {
   // function reaches out to stripe and completes payment, then updates user
-  // credits on user model, code from npm stripe documentation
-  app.post("/api/stripe", async (req, res) => {
+  // credits on user model, code from npm stripe documentation. The second
+  // argument is a middleware function that checks if user is logged in
+  app.post("/api/stripe", requireLogin, async (req, res) => {
     const charge = await stripe.charges.create({
       amount: 500,
       currency: "usd",
       description: "$5 for 5 credits",
       source: req.body.id
     });
-    console.log(charge);
+    req.user.credits += 5;
+    const user = await req.user.save();
+    res.send(user);
   });
 };
