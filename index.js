@@ -39,6 +39,7 @@ app.use(passport.session());
 // app object
 require("./routes/authRoutes")(app);
 require("./routes/billingRoutes")(app);
+require("./routes/surveyRoutes")(app);
 
 // this code makes sure that express handles everything in production correctly.
 // this code will only run in production if in production

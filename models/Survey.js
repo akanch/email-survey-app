@@ -14,8 +14,8 @@ const surveySchema = new Schema({
   // storage limit is changed to how many recipients there can be to each email
   // which is ~200,000
   recipients: [RecipientSchema],
-  yes: { type: NUmber, default: 0 },
-  no: { type: NUmber, default: 0 },
+  yes: { type: Number, default: 0 },
+  no: { type: Number, default: 0 },
   // the underscore is optional, just by convention, underscore shows it is
   // a relationship field and it is linked to another model.
   // Schema.Types.ObjectId is the id of the user that owns the record. the
