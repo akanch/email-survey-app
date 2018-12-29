@@ -1,6 +1,8 @@
 const mongoose = require("mongoose");
 const requireLogin = require("../middlewares/requireLogin");
 const requireCredits = require("../middlewares/requireCredits");
+const Mailer = require("../services/Mailer");
+const surveyTemplate = require("../services/emailTemplates/surveyTemplate");
 
 const Survey = mongoose.model("surveys");
 
@@ -21,5 +23,8 @@ module.exports = app => {
       _user: req.user.id,
       dateSent: Date.now()
     });
+    // sends new mailer to sendgrid's api. send function defined in Mailer.js
+    const mailer = new Mailer(survey, surveyTemplate(survey));
+    mailer.send();
   });
 };

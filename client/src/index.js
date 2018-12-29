@@ -8,7 +8,8 @@ import reduxThunk from "redux-thunk";
 
 import App from "./components/App";
 import reducers from "./reducers";
-
+import axios from "axios";
+window.axios = axios;
 
 // store takes all the reducers of the app as the first argument,
 // second argument is initial state, last is a middleware call
