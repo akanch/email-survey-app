@@ -9,7 +9,7 @@ const Survey = mongoose.model("surveys");
 module.exports = app => {
   // these arguments are called in line. make sure user is logged in first, then
   // check if user has enough credits, finally create survey if both true
-  app.post("/api/surveys", requireLogin, requireCredits, (req, res) => {
+  app.post("/api/surveys", requireLogin, requireCredits, async (req, res) => {
     const { title, subject, body, recipients } = req.body;
     // creates new instance of a survey in memory
     const survey = new Survey({
@@ -25,6 +25,18 @@ module.exports = app => {
     });
     // sends new mailer to sendgrid's api. send function defined in Mailer.js
     const mailer = new Mailer(survey, surveyTemplate(survey));
-    mailer.send();
+
+    try {
+      await mailer.send();
+      await survey.save();
+      req.user.credits -= 1;
+      const user = await req.user.save();
+
+      // sends back updated user model to reflect correct number of credits
+      res.send(user);
+  } catch (err) {
+    // sends back error assuming user sends poorly formed survey
+    res.status(422)
+  }
   });
 };
