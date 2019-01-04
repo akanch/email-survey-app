@@ -7,6 +7,10 @@ const surveyTemplate = require("../services/emailTemplates/surveyTemplate");
 const Survey = mongoose.model("surveys");
 
 module.exports = app => {
+  app.get("/api/surveys/thanks", (req, res) => {
+    res.send("Thanks for your feedback!");
+  });
+
   // these arguments are called in line. make sure user is logged in first, then
   // check if user has enough credits, finally create survey if both true
   app.post("/api/surveys", requireLogin, requireCredits, async (req, res) => {
@@ -27,6 +31,7 @@ module.exports = app => {
     const mailer = new Mailer(survey, surveyTemplate(survey));
 
     try {
+      // send out mailer and save survey to database
       await mailer.send();
       await survey.save();
       req.user.credits -= 1;
