@@ -8,20 +8,14 @@ import { reduxForm, Field } from "redux-form";
 import SurveyField from "./SurveyField";
 import { Link } from "react-router-dom";
 import validateEmails from "../../utils/validateEmails";
-
-const FIELDS = [
-  { label: "Survey Title", name: "title" },
-  { label: "Subject Line", name: "subject" },
-  { label: "Email Body", name: "body" },
-  { label: "Recipient List", name: "emails" }
-];
+import formFields from "./formFields"
 
 // handleSubmit is a function provided from the reduxForm that was wired
 // on the bottom. the function passed in will be automatically called
 // when a user submits the form
 class SurveyForm extends Component {
   renderFields() {
-    return _.map(FIELDS, ({ label, name }) => {
+    return _.map(formFields, ({ label, name }) => {
       return (
         <Field
           key={name}
@@ -63,7 +57,7 @@ function validate(values) {
 
   errors.emails = validateEmails(values.emails ||  "");
 
-  _.each(FIELDS, ({ name, label }) => {
+  _.each(formFields, ({ name, label }) => {
     if (!values[name]) {
       errors[name] = `You must provide a ${label.toLowerCase()}`;
     }
@@ -73,8 +67,11 @@ function validate(values) {
 }
 
 // reduxForm takes in one argument to help customize behavior of the form, it
-// wires up some additional props from reduxForm to our SurveyForm component
+// wires up some additional props from reduxForm to our SurveyForm component.
+// destroyOnUnmount helps to persist data when toggling between SurveyNew and
+// SurveyFormReview
 export default reduxForm({
   validate,
-  form: "surveyForm"
+  form: "surveyForm",
+  destroyOnUnmount: false
 })(SurveyForm);
