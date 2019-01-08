@@ -26,8 +26,12 @@ export const handleToken = (token) => async dispatch => {
 
 // this action creator makes a post request to api/surveys and passes the field
 // values to the backend. After the post request is completed, the updated user
-// model with updated credits is sent back
-export const submitSurvey = (values) => async dispatch => {
+// model with updated credits is sent back. The history object is passed as an
+// argument giving submitSurvey access to react router routes
+export const submitSurvey = (values, history) => async dispatch => {
   const res = await axios.post("/api/surveys", values);
+
+  // after the post request is successful, redirect user to dashboard
+  history.push("/surveys");
   dispatch({ type: FETCH_USER, payload: res.data });
 };
