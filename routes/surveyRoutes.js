@@ -11,6 +11,11 @@ module.exports = app => {
     res.send("Thanks for your feedback!");
   });
 
+  app.post("/api/surveys/webhooks", (req, res) => {
+    console.log(req.body);
+    res.send({});
+  });
+
   // these arguments are called in line. make sure user is logged in first, then
   // check if user has enough credits, finally create survey if both true
   app.post("/api/surveys", requireLogin, requireCredits, async (req, res) => {
