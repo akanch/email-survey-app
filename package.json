@@ -22,11 +22,13 @@
     "concurrently": "^4.1.0",
     "cookie-session": "^2.0.0-beta.3",
     "express": "^4.16.4",
+    "lodash": "^4.17.11",
     "mongoose": "^5.3.16",
     "ngrok": "^3.1.0",
     "nodemon": "^1.18.8",
     "passport": "^0.4.0",
     "passport-google-oauth20": "^1.0.0",
+    "path-parser": "^4.2.0",
     "sendgrid": "^5.2.3",
     "stripe": "^6.20.0"
   },
