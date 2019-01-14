@@ -10,14 +10,21 @@ const { URL } = require("url");
 const Survey = mongoose.model("surveys");
 
 module.exports = app => {
-  app.get("/api/surveys/thanks", (req, res) => {
+  app.get("/api/surveys", requireLogin, async (req, res) => {
+    const surveys = await Survey.find({ _user: req.user.id })
+      .select({ recipients: false });
+
+    res.send(surveys);
+  });
+
+  app.get("/api/surveys/:surveyId/:choice", (req, res) => {
     res.send("Thanks for your feedback!");
   });
 
   app.post("/api/surveys/webhooks", (req, res) => {
     const p = new Path("/api/surveys/:surveyId/:choice");
 
-    const events = _.chain(req.body)
+    _.chain(req.body)
       .map(({ email, url }) => {
         // extracts the path from the event url
         // extracts survey id and response from pathname variable. If there is no
@@ -30,9 +37,30 @@ module.exports = app => {
       // removes any elements that are undefined and any duplicate records
       .compact()
       .uniqBy("email", "surveyId")
+      .each(({ surveyId, email, choice }) => {
+        // Query goes through entire survey collection and finds the survey with
+        // same surveyId, and then go through its recipients sub-document collection and
+        // find one record that matches the same email, with a responded property false.
+        // the second argument instructs mongoose how to update the survey record.
+        // First, it finds the choice property and increments yes or no by one. Next, it
+        // looks into the recipients sub-document collection at the record matched from
+        // elemMatch and updates the responded property to true.Lastly, it sets the
+        // lastResponded date to the current date. All of this is done inside of Mongo
+        Survey.updateOne(
+          {
+            _id: surveyId,
+            recipients: {
+              $elemMatch: { email: email, responded: false }
+            }
+          },
+          {
+            $inc: { [choice]: 1 },
+            $set: { "recipients.$.responded": true },
+            lastResponded: new Date()
+          }
+        ).exec();
+      })
       .value();
-
-    console.log(events);
 
     res.send({});
   });
@@ -65,9 +93,9 @@ module.exports = app => {
 
       // sends back updated user model to reflect correct number of credits
       res.send(user);
-  } catch (err) {
-    // sends back error assuming user sends poorly formed survey
-    res.status(422)
-  }
+    } catch (err) {
+      // sends back error assuming user sends poorly formed survey
+      res.status(422);
+    }
   });
 };
