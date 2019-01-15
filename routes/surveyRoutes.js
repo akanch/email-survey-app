@@ -10,6 +10,8 @@ const { URL } = require("url");
 const Survey = mongoose.model("surveys");
 
 module.exports = app => {
+  // get all of the user's surveys without including the recipients
+  // sub-document collection got each survey
   app.get("/api/surveys", requireLogin, async (req, res) => {
     const surveys = await Survey.find({ _user: req.user.id })
       .select({ recipients: false });

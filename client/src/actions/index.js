@@ -1,6 +1,6 @@
 // this file holds all our action creators
 import axios from "axios";
-import { FETCH_USER } from "./types";
+import { FETCH_USER, FETCH_SURVEYS } from "./types";
 
 // redux thunk is wired up as a middleware. The purpose of redux thunk is to
 // inspect whatever value is returned from the action creator. If redux thunk
@@ -34,4 +34,10 @@ export const submitSurvey = (values, history) => async dispatch => {
   // after the post request is successful, redirect user to dashboard
   history.push("/surveys");
   dispatch({ type: FETCH_USER, payload: res.data });
+};
+
+// returns a payload of a list of surveys to display on the dashboard
+export const fetchSurveys = () => async dispatch => {
+  const res = await axios.get("/api/surveys");
+  dispatch({ type: FETCH_SURVEYS, payload: res.data })
 };
